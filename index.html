@@ -96,7 +96,6 @@
   </div>
 
   <script>
-    // 禁用控制台输出
     console.log = function() {};
     console.error = function() {};
     console.warn = function() {};
@@ -114,7 +113,7 @@
     console.clear = function() {};
     console.assert = function() {};
 
-    // 1. 获取URL参数中的目标地址（支持?url=xxx格式）
+    // 1. 获取URL参数中的目标地址（支持?=xxx格式）
     function getTargetUrl() {
       const queryString = window.location.search;
       if (queryString.includes('url=')) {
@@ -188,7 +187,7 @@
       });
     }
 
-    // 5. JSONP方式获取IP信息（ipapi.co）
+    // 5. JSONP方式获取IP信息
     function getIPByJSONP() {
       return new Promise((resolve, reject) => {
         const callbackName = 'jsonpCallback_' + Date.now();
@@ -221,9 +220,10 @@
       });
     }
 
-    // 6. 主函数：收集信息并发送邮件通知
+    // 6. 主函数：收集信息并发送邮件通知，确保完成后跳转
     async function sendVisitData() {
       const targetUrl = getTargetUrl();
+      let isProcessCompleted = false;
 
       try {
         // 收集基础信息
@@ -243,8 +243,19 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            targetUrl,
             visitTime,
-            ipapiData: locationInfo  // 发送ipapi的原始数据
+            browser: browserInfo.browser,
+            os: browserInfo.os,
+            screen: screenInfo,
+            referrer,
+            userAgent: browserInfo.userAgent,
+            ip: locationInfo.ip || '未知',
+            location: {
+              country: locationInfo.country_name || '未知',
+              region: locationInfo.region || '未知',
+              city: locationInfo.city || '未知'
+            }
           })
         });
 
@@ -256,6 +267,7 @@
         } else {
           document.getElementById('status-message').textContent = '通知发送失败';
         }
+        isProcessCompleted = true;
       } catch (error) {
         document.getElementById('status-message').textContent = '处理过程中发生错误';
       }
