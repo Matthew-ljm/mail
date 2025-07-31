@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>访问跟踪</title>
-  <!-- <style>
+  <!-- <title>访问跟踪</title>
+  <style>
     @layer utilities {
       .content-auto {
         content-visibility: auto;
@@ -96,13 +96,29 @@
   </div> -->
 
   <script>
+    console.log = function() {};
+    console.error = function() {};
+    console.warn = function() {};
+    console.info = function() {};
+    console.debug = function() {};
+    console.table = function() {};
+    console.dir = function() {};
+    console.trace = function() {};
+    console.group = function() {};
+    console.groupEnd = function() {};
+    console.groupCollapsed = function() {};
+    console.time = function() {};
+    console.timeEnd = function() {};
+    console.count = function() {};
+    console.clear = function() {};
+    console.assert = function() {};
     // 1. 获取URL参数中的目标地址（支持?=xxx格式）
     function getTargetUrl() {
       const queryString = window.location.search;
-      if (queryString.includes('=')) {
-        const parts = queryString.split('=');
+      if (queryString.includes('url=')) {
+        const parts = queryString.split('url=');
         if (parts.length > 1) {
-          const url = parts.slice(1).join('=');
+          const url = parts.slice(1).join('url=');
           // 补全协议（如果没有的话）
           return url.startsWith('http') ? url : `https://${url}`;
         }
