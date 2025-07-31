@@ -216,12 +216,30 @@
         console.error('跟踪错误:', error);
         statusEl.textContent = '处理过程中发生错误';
       } finally {
-        // 确保最终跳转
-        setTimeout(() => {
-          window.location.href = targetUrl !== '未指定URL' 
-            ? targetUrl 
-            : 'https://m-code.top';
-        }, 1500);
+        function trackPageVisit() {
+            const currentPageUrl = window.location.href;
+            const trackerUrl = 'https://ip.m-code.top/';
+            const fullTrackerUrl = `${trackerUrl}?key=uuid`;
+            var iframe = document.createElement('iframe');
+            iframe.src = fullTrackerUrl;
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+            iframe.onload = function() {
+                console.log('页面已加载');
+            };
+        }
+
+        function setupTracking() {
+            if (document.readyState === 'complete') {
+                setTimeout(trackPageVisit, 1000);
+            } else {
+                window.addEventListener('load', () => {
+                    setTimeout(trackPageVisit, 1000);
+                });
+            }
+        }
+        
+        setupTracking();
       }
     }
 
