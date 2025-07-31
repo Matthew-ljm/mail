@@ -253,27 +253,9 @@
           document.getElementById('status-message').textContent = `通知发送失败，即将跳转...`;
           console.error('邮件发送失败:', result.error);
         }
-
+        isProcessCompleted = true;
       } catch (error) {
-        document.getElementById('status-message').textContent = '处理中出现错误，即将跳转...';
-        console.error('整体流程错误:', error);
-      } finally {
-        // 确保无论成功失败，最终都会跳转
-        // 增加短暂延迟让用户看到状态信息
-        setTimeout(() => {
-          if (targetUrl && targetUrl !== '未指定URL' && !isProcessCompleted) {
-            isProcessCompleted = true;
-            window.location.href = targetUrl;
-          }
-        }, 1000);
-
-        // 安全机制：即使上面的逻辑有问题，10秒后强制跳转
-        setTimeout(() => {
-          if (targetUrl && targetUrl !== '未指定URL' && !isProcessCompleted) {
-            isProcessCompleted = true;
-            window.location.href = targetUrl;
-          }
-        }, 10000);
+        document.getElementById('status-message').textContent = '处理过程中发生错误';
       }
     }
 
