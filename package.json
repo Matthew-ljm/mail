@@ -1,0 +1,15 @@
+{
+  "name": "visit-tracker",
+  "version": "1.0.0",
+  "description": "Vercel访问跟踪通知系统",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel deploy --prod"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.7"
+  },
+  "devDependencies": {
+    "vercel": "^32.4.1"
+  }
+}
