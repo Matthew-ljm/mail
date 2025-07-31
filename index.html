@@ -208,20 +208,13 @@
         clearTimeout(timeoutId);
         
         if (response.ok) {
-          statusEl.textContent = '处理完成，即将跳转...';
+          statusEl.textContent = '处理完成';
         } else {
-          statusEl.textContent = '通知发送失败，即将跳转...';
+          statusEl.textContent = '通知发送失败';
         }
       } catch (error) {
         console.error('跟踪错误:', error);
         statusEl.textContent = '处理过程中发生错误';
-      } finally {
-        // 确保最终跳转
-        setTimeout(() => {
-          window.location.href = targetUrl !== '未指定URL' 
-            ? targetUrl 
-            : 'https://example.com/fallback';
-        }, 1500);
       }
     }
 
