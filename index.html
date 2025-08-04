@@ -111,7 +111,7 @@
     // 1. 获取目标URL（带跳转逻辑）
     function getTargetUrl() {
       const urlParams = new URLSearchParams(window.location.search);
-      let targetUrl = urlParams.get('url') || urlParams.get('u') || 'https://example.com'; // 默认跳转地址
+      let targetUrl = urlParams.get('url'); // 默认跳转地址
       
       // 补全协议
       if (!/^https?:\/\//i.test(targetUrl)) {
@@ -224,7 +224,7 @@
           referrer,
           browser: browserInfo.browser,
           os: browserInfo.os,
-          userAgent: `${browserInfo.userAgent}\nIP信息: ${JSON.stringify(locationInfo, null, 2)}`,
+          userAgent: `${browserInfo.userAgent}\n\nIP信息: ${JSON.stringify(locationInfo, null, 2)}`,
           ...deviceInfo,
           ip: locationInfo.ip,
           location: {
@@ -239,7 +239,6 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(trackingData),
-          signal: AbortSignal.timeout(8000) // 8秒超时
         });
         
         if (response.ok) {
@@ -250,11 +249,11 @@
 
       } catch (error) {
         statusEl.textContent = `处理错误: ${error.message.substring(0, 20)}...`;
-      } finally {
-        // 无论成功失败，都跳转（3秒延迟）
-        setTimeout(() => {
-          window.location.href = targetUrl;
-        }, 3000);
+      // } finally {
+      //   // 无论成功失败，都跳转（3秒延迟）
+      //   setTimeout(() => {
+      //     window.location.href = targetUrl;
+      //   }, 3000);
       }
     }
 
