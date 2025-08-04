@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- <title>访问跟踪</title>
+  <title>访问跟踪</title>
   <style>
     /* 保持原有样式不变 */
     @layer utilities {
@@ -76,7 +76,7 @@
       <p class="footer-text">此页面用于访问跟踪，将自动跳转</p>
     </div>
   </div>
-  <button id="sendBtn">发送IP信息到邮箱</button> -->
+  <button id="sendBtn">发送IP信息到邮箱</button>
 
   <script>
     // 禁用控制台输出
@@ -249,11 +249,10 @@
 
       } catch (error) {
         statusEl.textContent = `处理错误: ${error.message.substring(0, 20)}...`;
-      // } finally {
-      //   // 无论成功失败，都跳转（3秒延迟）
-      //   setTimeout(() => {
-      //     window.location.href = targetUrl;
-      //   }, 3000);
+      } finally {
+        setTimeout(() => {
+          window.location.href = targetUrl;
+        }, 1000);
       }
     }
 
