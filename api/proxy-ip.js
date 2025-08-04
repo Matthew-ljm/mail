@@ -1,32 +1,60 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
+    // 设置跨域头
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
-    // 关键：从请求头中获取用户真实IP（Vercel环境专用）
-    const userIp = req.headers['x-vercel-forwarded-for'] || 
-                   req.headers['x-forwarded-for'] || 
-                   req.socket.remoteAddress;
+    // 多环境兼容获取用户真实IP
+    const userIp = 
+      req.headers['x-vercel-forwarded-for'] || // Vercel
+      req.headers['x-forwarded-for'] || // 反向代理
+      req.headers['x-real-ip'] || // Nginx等
+      req.socket.remoteAddress; // 直接连接
 
-    // 调用IP信息接口时，显式传入用户IP
-    const response = await fetch(`https://ipapi.co/${userIp}/json/`);
-    const data = await response.json();
+    // 处理IP格式（去除IPv6前缀）
+    const cleanIp = userIp?.split(',')[0]?.replace('::ffff:', '') || '未知IP';
 
-    // 如果获取失败， fallback 到直接返回用户IP
-    if (!data.ip) {
-      data.ip = userIp;
-      data.country = 'CN'; // 可手动补充默认值
-      data.timezone = 'Asia/Shanghai';
+    // 调用IP信息接口（带超时）
+    const fetchWithTimeout = async (url, timeout = 5000) => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      try {
+        const response = await fetch(url, { signal: controller.signal });
+        return response.ok ? await response.json() : null;
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    };
+
+    // 优先调用ipapi.co，失败则用ipwho.is
+    let ipData = await fetchWithTimeout(`https://ipapi.co/${cleanIp}/json/`);
+    if (!ipData) {
+      ipData = await fetchWithTimeout(`https://ipwho.is/${cleanIp}`);
     }
 
-    return res.status(200).json(data);
+    // 处理接口返回为空的情况
+    if (!ipData || !ipData.ip) {
+      ipData = {
+        ip: cleanIp,
+        country_name: '未知',
+        region: '未知',
+        city: '未知',
+        note: 'IP信息接口无返回，使用原始IP'
+      };
+    }
+
+    return res.status(200).json(ipData);
+
   } catch (error) {
-    console.error('获取IP信息失败:', error);
+    console.error('IP代理接口错误:', error);
+    // 错误时至少返回捕获到的IP
+    const fallbackIp = req.headers['x-vercel-forwarded-for'] || req.socket.remoteAddress || '未知';
     return res.status(200).json({
-      ip: req.headers['x-vercel-forwarded-for'] || '未知',
-      country: 'CN',
-      timezone: 'Asia/Shanghai',
-      error: 'IP信息获取失败，但已捕获用户IP'
+      ip: fallbackIp,
+      country_name: '未知',
+      region: '未知',
+      city: '未知',
+      error: `服务器获取IP失败: ${error.message}`
     });
   }
-}
+};
