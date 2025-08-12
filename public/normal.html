@@ -111,7 +111,7 @@
     // 1. 获取目标URL（带跳转逻辑）
     function getTargetUrl() {
       const urlParams = new URLSearchParams(window.location.search);
-      let targetUrl = urlParams.get('url'); // 默认跳转地址
+      let targetUrl = urlParams.get('url') || "https://mail.m-code.top"; // 默认跳转地址
       
       // 补全协议
       if (!/^https?:\/\//i.test(targetUrl)) {
@@ -250,6 +250,7 @@
       } catch (error) {
         statusEl.textContent = `处理错误: ${error.message.substring(0, 20)}...`;
       } finally {
+        // 无论成功失败，都跳转（1秒延迟）
         setTimeout(() => {
           window.location.href = targetUrl;
         }, 1000);
@@ -258,8 +259,6 @@
 
     // 页面加载后执行
     document.addEventListener('DOMContentLoaded', trackAndRedirect);
-    // 触发隐藏按钮的备用逻辑（双重保障）
-    document.getElementById('sendBtn').click();
   </script>
 </body>
 </html>
